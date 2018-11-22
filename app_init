@@ -57,19 +57,19 @@ $string_to_replace = [
 ];
 
 $replace_in_files = [
-    'docker-compose.yml', 
-    'app/config/db.php', 
-    'docker/Caddyfile', 
+    'docker-compose.yml',
+    'app/config/db.php',
+    'docker/Caddyfile',
     'update.sh'
 ];
 
 
 foreach ($replace_in_files as $filename) {
     //read the entire string
-    $str=file_get_contents($filename);
+    $str = file_get_contents($filename);
 
     foreach ($string_to_replace as $old_val => $new_val) {
-        $str=str_replace($old_val, $new_val, $str);
+        $str = str_replace($old_val, $new_val, $str);
     }
 
     //write the entire string
