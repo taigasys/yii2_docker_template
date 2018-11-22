@@ -1,0 +1,81 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Project init wizard
+ *
+ * @link http://taiga.systems
+ * @copyright Copyright (c) 2018 Taiga Systems
+ * @author Pavel Pavlenko region23@gmail.com
+ */
+
+print("*** Первичная инициализация проекта ***\n\n");
+
+$project_name = readline("Введи название проекта на английском языке\n>>> ");
+$mysql_root_password = readline("Придумай root-пароль для подключения к MySQL\n>>> ");
+$mysql_password = readline("Придумай пароль для пользователя user для подключения к MySQL\n>>> ");
+$project_type = readline("Создать новый проект (1) или инициализировать существующий проект (2)?\n>>> ");
+$server_type = readline("Проект инициализируется для боевого сервера (prod) или компьютера разработчика (dev)?\n>>> ");
+
+$app_exist = false;
+if (file_exists("./app") && is_dir("./app")) {
+    $app_exist = true;
+}
+
+if ($project_type == "1" && !$app_exist) {
+    shell_exec('composer create-project --prefer-dist yiisoft/yii2-app-basic app');
+} elseif ($project_type == "2") {
+    readline("Создайте папку app/ и переместите в неё ваш Yii2-проект. После этого нажмите клавишу Enter.");
+}
+
+# Чистим от мусора папку с проектом
+shell_exec("rm -rf app/vagrant app/.gitignore app/docker-compose.yml app/LICENSE.md app/README.md app/Vagrantfile");
+
+# Вариант для Dev
+if ($server_type == "dev") {
+    shell_exec("cp -f templates/Caddyfile.dev docker/Caddyfile");
+} elseif ($server_type == "prod") {
+# Вариант для Production
+    shell_exec("cp -f templates/Caddyfile.prod docker/Caddyfile");
+    $project_domain = readline("Введи название домена, на котором будет располагаться проект (без http://)\n >>> ");
+    $phpmyadmin_domain = readline("Введи название домена, на котором будет располагаться PhpMyAdmin (без http://)\n >>> ");
+}
+
+# Операции одинаковые для обоих серверов
+# Скопировать app/runtime/.gitignore в app/vendor/.gitignore
+shell_exec("cp -f app/runtime/.gitignore app/vendor/.gitignore");
+shell_exec("cp -f templates/docker-compose.yml docker-compose.yml");
+shell_exec("cp -f templates/db.php app/config/db.php");
+shell_exec("cp -f templates/update.sh update.sh");
+
+
+$string_to_replace = [
+    "{PROJECT_NAME}" => $project_name,
+    "{MYSQL_ROOT_PASSWORD}" => $mysql_root_password,
+    "{MYSQL_PASSWORD}" => $mysql_password,
+    "{PHPMYADMIN_DOMAIN}" => $phpmyadmin_domain,
+    "{PROJECT_DOMAIN}" => $project_domain
+];
+
+$replace_in_files = [
+    'docker-compose.yml', 
+    'app/config/db.php', 
+    'docker/Caddyfile', 
+    'update.sh'
+];
+
+
+foreach ($replace_in_files as $filename) {
+    //read the entire string
+    $str=file_get_contents($filename);
+
+    foreach ($string_to_replace as $old_val => $new_val) {
+        $str=str_replace($old_val, $new_val, $str);
+    }
+
+    //write the entire string
+    file_put_contents($filename, $str);
+}
+
+
+# Накатываем все зависимости composer
+shell_exec("bash composer_install.sh");

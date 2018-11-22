@@ -1,0 +1,16 @@
+FROM php:7-fpm
+
+COPY php.ini /usr/local/etc/php/
+RUN mkdir -p /app
+WORKDIR /app
+
+RUN apt-get update && apt-get install -my \
+	wget \
+	git \
+	unzip \
+    make \
+    libtool \
+	libxml2-dev \
+	libpng-dev
+RUN docker-php-source extract 
+RUN docker-php-ext-install mysqli pdo_mysql json soap xml opcache mbstring dom gd

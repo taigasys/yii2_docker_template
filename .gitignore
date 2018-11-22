@@ -1,0 +1,41 @@
+# phpstorm project files
+.idea
+.vscode
+
+# папка с базой MySQL
+/mysql
+
+# сертификаты Caddy для текущего сервера
+/docker/.caddy
+
+# netbeans project files
+nbproject
+
+# zend studio for eclipse project files
+.buildpath
+.project
+.settings
+
+# windows thumbnail cache
+Thumbs.db
+
+
+# composer itself is not needed
+composer.phar
+
+# Mac DS_Store Files
+.DS_Store
+
+# phpunit itself is not needed
+phpunit.phar
+# local phpunit config
+phpunit.xml
+
+/app/tests/_output/*
+/app/tests/_support/_generated
+
+/docker/Caddyfile
+./update.sh
+./docker-compose.yml
+/app/config/db.php
+docker-compose.yml

@@ -1,0 +1,11 @@
+FROM mysql:5.7
+
+ENV TZ=Europe/Moscow
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+RUN apt-get update && apt-get install -my pv gzip openssh-client
+
+COPY sqlmode.cnf /etc/mysql/mysql.conf.d/
+
+# set the working directory
+#WORKDIR /root/
