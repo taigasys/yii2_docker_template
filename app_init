@@ -24,11 +24,11 @@ do {
 
 do {
     $projectType = readline("Создать новый проект (1) или инициализировать существующий проект (2)?\n>>> ");
-} while ($projectType !== '1' || $projectType !== '2');
+} while ($projectType !== '1' && $projectType !== '2');
 
 do {
     $serverType = readline("Проект инициализируется для боевого сервера (prod) или компьютера разработчика (dev)?\n>>> ");
-} while ($serverType !== 'dev' || $serverType !== 'prod');
+} while ($serverType !== 'dev' && $serverType !== 'prod');
 
 $appExist = false;
 if (file_exists("./app") && is_dir("./app")) {
