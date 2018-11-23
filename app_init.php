@@ -47,12 +47,12 @@ if ('1' === $projectType && !$appExist) {
     shell_exec('composer create-project --prefer-dist yiisoft/yii2-app-basic app');
 } elseif ('2' === $projectType) {
     readline("Создайте папку app/ и переместите в неё ваш Yii2-проект. После этого нажмите клавишу Enter.");
-
+    shell_exec('ls');
     # Устанавливаем правильные права
-    shell_exec('chmod -r 0777 app/runtime');
-    shell_exec('chmod -r 0777 app/web/assets');
-    #shell_exec('chmod -r 0755 app/web/vendor');
-    shell_exec('chmod 0755 app/yii');
+    shell_exec('chmod -R 777 app/runtime');
+    shell_exec('chmod -R 777 app/web/assets');
+    #shell_exec('chmod -R 755 app/web/vendor');
+    shell_exec('chmod 755 app/yii');
 }
 
 # Чистим от мусора папку с проектом
@@ -105,14 +105,14 @@ foreach ($replaceInFiles as $filename) {
     //read the entire string
     $str = file_get_contents($filename);
 
-    foreach ($stringToReplace as $oldVal => $newVal) {
-        $str = str_replace($oldVal, $newVal, $str);
-    }
-
     if ('prod' === $serverType) {
         $str = str_replace('- {PROJECT_PORT}:{PROJECT_PORT}', '', $str);
         $str = str_replace('- {PHPMYADMIN_PORT}:{PHPMYADMIN_PORT}', '', $str);
         $str = str_replace('#restart: always', 'restart: always', $str);
+    }
+
+    foreach ($stringToReplace as $oldVal => $newVal) {
+        $str = str_replace($oldVal, $newVal, $str);
     }
 
     //write the entire string

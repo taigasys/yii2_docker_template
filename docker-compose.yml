@@ -1,46 +1,47 @@
 version: '3'
 services:
   mysql_db:
-    container_name: test_mysql_db
+    restart: always
+    container_name: fsdf_mysql_db
     build:
       context: ./docker
       dockerfile: Dockerfile_mysql
     volumes:
     - ./mysql:/var/lib/mysql
-    #restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: test
+      MYSQL_ROOT_PASSWORD: w
+      MYSQL_DATABASE: fsdf
       MYSQL_USER: user
-      MYSQL_PASSWORD: user
+      MYSQL_PASSWORD: f
     command: --character-set-server=utf8 --collation-server=utf8_general_ci
 
 
   phpmyadmin:
-    container_name: test_phpmyadmin
+    restart: always
+    container_name: fsdf_phpmyadmin
     image: phpmyadmin/phpmyadmin:latest
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      PMA_HOST: test_mysql_db
-    #restart: always
+      MYSQL_ROOT_PASSWORD: w
+      PMA_HOST: fsdf_mysql_db
     depends_on:
     - mysql_db
     volumes:
     - /sessions
 
   php:
-    container_name: test_php
+    restart: always
+    container_name: fsdf_php
     build:
       context: ./docker
       dockerfile: Dockerfile_php
     volumes:
     - ./app:/app
-    #restart: always
     depends_on:
     - mysql_db
 
   caddy:
-    container_name: test_caddy
+    restart: always
+    container_name: fsdf_caddy
     build:
       context: ./docker
       dockerfile: Dockerfile_caddy
@@ -55,5 +56,5 @@ services:
     - 80:80
     - 443:443
     - 2015:2015
-    - 8000:8000
-    - 8001:8001
+    
+    
