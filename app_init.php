@@ -46,16 +46,10 @@ if ('1' === $projectType && !$appExist) {
 
     shell_exec('composer create-project --prefer-dist yiisoft/yii2-app-basic app');
 } elseif ('2' === $projectType) {
-    do {
-        $email = readline("Для выдачи tls-сертификата введите ваш email\n>>> ");
-    } while ('' === $email);
-
     readline("Создайте папку app/ и переместите в неё ваш Yii2-проект. После этого нажмите клавишу Enter.");
-    shell_exec('ls');
     # Устанавливаем правильные права
     shell_exec('chmod -R 777 app/runtime');
     shell_exec('chmod -R 777 app/web/assets');
-    #shell_exec('chmod -R 755 app/web/vendor');
     shell_exec('chmod 755 app/yii');
 }
 
@@ -68,6 +62,10 @@ if ('dev' === $serverType) {
     shell_exec("cp -f templates/db.php app/config/db.php");
 } elseif ('prod' === $serverType) {
     # Вариант для Production
+    do {
+        $email = readline("Для выдачи tls-сертификата введите ваш email\n>>> ");
+    } while ('' === $email);
+    
     shell_exec("cp -f templates/Caddyfile.prod docker/Caddyfile");
     shell_exec("cp -f templates/db.php.prod app/config/db.php");
 
@@ -81,8 +79,6 @@ if ('dev' === $serverType) {
 }
 
 # Операции одинаковые для обоих серверов
-# Скопировать app/runtime/.gitignore в app/vendor/.gitignore
-shell_exec("cp -f app/runtime/.gitignore app/vendor/.gitignore");
 shell_exec("cp -f templates/docker-compose.yml docker-compose.yml");
 shell_exec("cp -f templates/update.sh update.sh");
 
@@ -126,5 +122,7 @@ foreach ($replaceInFiles as $filename) {
 }
 
 
+# Скопировать app/runtime/.gitignore в app/vendor/.gitignore
+shell_exec("cp -f app/runtime/.gitignore app/vendor/.gitignore");
 # Накатываем все зависимости composer
 shell_exec("composer install --ignore-platform-reqs --no-scripts");
