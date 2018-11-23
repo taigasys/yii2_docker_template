@@ -38,5 +38,5 @@ phpunit.xml
 ./update.sh
 ./docker-compose.yml
 /app/config/db.php
-/app/web/img/files/
+/app/web/img/files/*
 docker-compose.yml
