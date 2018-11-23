@@ -44,15 +44,15 @@ if ('1' === $projectType && !$appExist) {
         $phpmyadminPort = readline("Введи порт для PhpMyAdmin. Будет открываться по адресу https://localhost:port\n>>> ");
     } while ('' === $phpmyadminPort);
 
-    shell_exec('docker run --rm --interactive --tty --volume $PWD:/app "composer create-project --prefer-dist yiisoft/yii2-app-basic app"');
-    
+    shell_exec('composer create-project --prefer-dist yiisoft/yii2-app-basic app');
+
 } elseif ('2' === $projectType) {
     readline("Создайте папку app/ и переместите в неё ваш Yii2-проект. После этого нажмите клавишу Enter.");
 
     # Устанавливаем правильные права
     shell_exec('chmod -r 0777 app/runtime');
     shell_exec('chmod -r 0777 app/web/assets');
-    shell_exec('chmod -r 0755 app/web/vendor');
+    #shell_exec('chmod -r 0755 app/web/vendor');
     shell_exec('chmod 0755 app/yii');
 }
 
@@ -115,4 +115,4 @@ foreach ($replaceInFiles as $filename) {
 
 
 # Накатываем все зависимости composer
-shell_exec("bash composer_install.sh");
+shell_exec("composer install --ignore-platform-reqs --no-scripts");
