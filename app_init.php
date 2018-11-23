@@ -123,6 +123,6 @@ foreach ($replaceInFiles as $filename) {
 
 
 # Накатываем все зависимости composer
-shell_exec("composer install --ignore-platform-reqs --no-scripts");
+shell_exec("cd app && composer install --ignore-platform-reqs --no-scripts");
 # Скопировать app/runtime/.gitignore в app/vendor/.gitignore
 shell_exec("cp -f app/runtime/.gitignore app/vendor/.gitignore");
