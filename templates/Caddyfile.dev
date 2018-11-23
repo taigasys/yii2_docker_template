@@ -1,5 +1,5 @@
-# PHP-сервер с CRM-кой
-localhost:8000 {
+# Основной проект
+localhost:{PROJECT_PORT} {
     root /app/web/
 
     fastcgi / {PROJECT_NAME}_php:9000 php {
@@ -27,8 +27,8 @@ localhost:8000 {
     tls self_signed
 }
 
-# PHPMyAdmin
-localhost:8001 {
+# PhpMyAdmin
+localhost:{PHPMYADMIN_PORT} {
     proxy / {PROJECT_NAME}_phpmyadmin:80 {
         transparent
     }

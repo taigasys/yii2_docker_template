@@ -12,52 +12,66 @@ print("*** Первичная инициализация проекта ***\n\n"
 
 do {
     $projectName = readline("Введи название проекта на английском языке\n>>> ");
-} while ($projectName === '');
+} while ('' === $projectName);
 
 do {
     $mysqlRootPassword = readline("Придумай root-пароль для подключения к MySQL\n>>> ");
-} while ($mysqlRootPassword === '');
+} while ('' === $mysqlRootPassword);
 
 do {
     $mysqlPassword = readline("Придумай пароль для пользователя user для подключения к MySQL\n>>> ");
-} while ($mysqlPassword === '');
+} while ('' === $mysqlPassword);
 
 do {
     $projectType = readline("Создать новый проект (1) или инициализировать существующий проект (2)?\n>>> ");
-} while ($projectType !== '1' && $projectType !== '2');
+} while ('1' !== $projectType && '2' !== $projectType);
 
 do {
     $serverType = readline("Проект инициализируется для боевого сервера (prod) или компьютера разработчика (dev)?\n>>> ");
-} while ($serverType !== 'dev' && $serverType !== 'prod');
+} while ('dev' !== $serverType && 'prod' !== $serverType);
 
 $appExist = false;
 if (file_exists("./app") && is_dir("./app")) {
     $appExist = true;
 }
 
-if ($projectType === "1" && !$appExist) {
-    shell_exec('composer create-project --prefer-dist yiisoft/yii2-app-basic app');
-} elseif ($projectType === "2") {
+if ('1' === $projectType && !$appExist) {
+    do {
+        $projectPort = readline("Введи порт проекта. Будет открываться по адресу https://localhost:port\n>>> ");
+    } while ('' === $projectPort);
+
+    do {
+        $phpmyadminPort = readline("Введи порт для PhpMyAdmin. Будет открываться по адресу https://localhost:port\n>>> ");
+    } while ('' === $phpmyadminPort);
+
+    shell_exec('docker run --rm --interactive --tty --volume $PWD:/app composer create-project --prefer-dist yiisoft/yii2-app-basic app');
+} elseif ('2' === $projectType) {
     readline("Создайте папку app/ и переместите в неё ваш Yii2-проект. После этого нажмите клавишу Enter.");
+
+    # Устанавливаем правильные права
+    shell_exec('chmod -r 0777 app/runtime');
+    shell_exec('chmod -r 0777 app/web/assets');
+    shell_exec('chmod -r 0755 app/web/vendor');
+    shell_exec('chmod 0755 app/yii');
 }
 
 # Чистим от мусора папку с проектом
 shell_exec("rm -rf app/vagrant app/.gitignore app/docker-compose.yml app/LICENSE.md app/README.md app/Vagrantfile");
 
 # Вариант для Dev
-if ($serverType === "dev") {
+if ('dev' === $serverType) {
     shell_exec("cp -f templates/Caddyfile.dev docker/Caddyfile");
-} elseif ($serverType === "prod") {
+} elseif ('prod' === $serverType) {
     # Вариант для Production
     shell_exec("cp -f templates/Caddyfile.prod docker/Caddyfile");
 
     do {
         $projectDomain = readline("Введи название домена, на котором будет располагаться проект (без http://)\n >>> ");
-    } while ($projectDomain === '');
+    } while ('' === $projectDomain);
 
     do {
         $phpmyadminDomain = readline("Введи название домена, на котором будет располагаться PhpMyAdmin (без http://)\n >>> ");
-    } while ($phpmyadminDomain === '');
+    } while ('' === $phpmyadminDomain);
 }
 
 # Операции одинаковые для обоих серверов
@@ -73,7 +87,9 @@ $stringToReplace = [
     "{MYSQL_ROOT_PASSWORD}" => $mysqlRootPassword,
     "{MYSQL_PASSWORD}" => $mysqlPassword,
     "{PHPMYADMIN_DOMAIN}" => $phpmyadminDomain,
-    "{PROJECT_DOMAIN}" => $projectDomain
+    "{PROJECT_DOMAIN}" => $projectDomain,
+    "{PROJECT_PORT}" => $projectPort,
+    "{PHPMYADMIN_PORT}" => $phpmyadminPort
 ];
 
 $replaceInFiles = [

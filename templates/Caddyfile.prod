@@ -1,28 +1,4 @@
-
-# PHPMyAdmin
-{PHPMYADMIN_DOMAIN} {
-    proxy / {PROJECT_NAME}_phpmyadmin:80 {
-        transparent
-    }
-
-    gzip
-
-    errors stdout {
-        rotate_size 50  # Rotate after 50 MB
-        rotate_age  90  # Keep rotated files for 90 days
-        rotate_keep 10  # Keep at most 20 log files
-        rotate_compress # Compress rotated log files in gzip format
-    }
-
-    log stdout {
-        rotate_size 50  # Rotate after 50 MB
-        rotate_age  90  # Keep rotated files for 90 days
-        rotate_keep 10  # Keep at most 20 log files
-        rotate_compress # Compress rotated log files in gzip format
-    }
-}
-
-# PHP-сервер с CRM-кой
+# Основной проект
 {PROJECT_DOMAIN} {
     root /app/web/
 
@@ -49,4 +25,27 @@
     }
 
     gzip
+}
+
+# PhpMyAdmin
+{PHPMYADMIN_DOMAIN} {
+    proxy / {PROJECT_NAME}_phpmyadmin:80 {
+        transparent
+    }
+
+    gzip
+
+    errors stdout {
+        rotate_size 50  # Rotate after 50 MB
+        rotate_age  90  # Keep rotated files for 90 days
+        rotate_keep 10  # Keep at most 20 log files
+        rotate_compress # Compress rotated log files in gzip format
+    }
+
+    log stdout {
+        rotate_size 50  # Rotate after 50 MB
+        rotate_age  90  # Keep rotated files for 90 days
+        rotate_keep 10  # Keep at most 20 log files
+        rotate_compress # Compress rotated log files in gzip format
+    }
 }
