@@ -53,8 +53,6 @@ services:
     - ./docker/.caddy:/root/.caddy/
     - ./app:/app
     ports:
-    - 80:80
-    - 443:443
-    - 2015:2015
     - {PROJECT_PORT}:{PROJECT_PORT}
     - {PHPMYADMIN_PORT}:{PHPMYADMIN_PORT}
+    #- 2015:2015

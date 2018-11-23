@@ -1,5 +1,6 @@
 # Основной проект
 {PROJECT_DOMAIN} {
+    tls {EMAIL}
     root /app/web/
 
     fastcgi / {PROJECT_NAME}_php:9000 php {
@@ -29,6 +30,7 @@
 
 # PhpMyAdmin
 {PHPMYADMIN_DOMAIN} {
+    tls {EMAIL}
     proxy / {PROJECT_NAME}_phpmyadmin:80 {
         transparent
     }

@@ -46,6 +46,10 @@ if ('1' === $projectType && !$appExist) {
 
     shell_exec('composer create-project --prefer-dist yiisoft/yii2-app-basic app');
 } elseif ('2' === $projectType) {
+    do {
+        $email = readline("Для выдачи tls-сертификата введите ваш email\n>>> ");
+    } while ('' === $email);
+
     readline("Создайте папку app/ и переместите в неё ваш Yii2-проект. После этого нажмите клавишу Enter.");
     shell_exec('ls');
     # Устанавливаем правильные права
@@ -56,7 +60,7 @@ if ('1' === $projectType && !$appExist) {
 }
 
 # Чистим от мусора папку с проектом
-shell_exec("rm -rf app/vagrant app/.gitignore app/docker-compose.yml app/LICENSE.md app/README.md app/Vagrantfile");
+shell_exec("rm -rf app/vagrant app/.gitignore app/docker-compose.yml app/LICENSE.md app/README.md app/Vagrantfile docker/.caddy");
 
 # Вариант для Dev
 if ('dev' === $serverType) {
@@ -90,14 +94,15 @@ $stringToReplace = [
     "{PHPMYADMIN_DOMAIN}" => $phpmyadminDomain,
     "{PROJECT_DOMAIN}" => $projectDomain,
     "{PROJECT_PORT}" => $projectPort,
-    "{PHPMYADMIN_PORT}" => $phpmyadminPort
+    "{PHPMYADMIN_PORT}" => $phpmyadminPort,
+    "{EMAIL}" => $email,
 ];
 
 $replaceInFiles = [
     'docker-compose.yml',
     'app/config/db.php',
     'docker/Caddyfile',
-    'update.sh'
+    'update.sh',
 ];
 
 
@@ -106,8 +111,9 @@ foreach ($replaceInFiles as $filename) {
     $str = file_get_contents($filename);
 
     if ('prod' === $serverType) {
-        $str = str_replace('- {PROJECT_PORT}:{PROJECT_PORT}', '', $str);
-        $str = str_replace('- {PHPMYADMIN_PORT}:{PHPMYADMIN_PORT}', '', $str);
+        $str = str_replace('- {PROJECT_PORT}:{PROJECT_PORT}', '- 80:80', $str);
+        $str = str_replace('- {PHPMYADMIN_PORT}:{PHPMYADMIN_PORT}', '- 443:443', $str);
+        $str = str_replace('#- 2015:2015', '- 2015:2015', $str);
         $str = str_replace('#restart: always', 'restart: always', $str);
     }
 
