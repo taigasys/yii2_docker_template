@@ -45,7 +45,6 @@ if ('1' === $projectType && !$appExist) {
     } while ('' === $phpmyadminPort);
 
     shell_exec('composer create-project --prefer-dist yiisoft/yii2-app-basic app');
-
 } elseif ('2' === $projectType) {
     readline("Создайте папку app/ и переместите в неё ваш Yii2-проект. После этого нажмите клавишу Enter.");
 
@@ -62,9 +61,11 @@ shell_exec("rm -rf app/vagrant app/.gitignore app/docker-compose.yml app/LICENSE
 # Вариант для Dev
 if ('dev' === $serverType) {
     shell_exec("cp -f templates/Caddyfile.dev docker/Caddyfile");
+    shell_exec("cp -f templates/db.php app/config/db.php");
 } elseif ('prod' === $serverType) {
     # Вариант для Production
     shell_exec("cp -f templates/Caddyfile.prod docker/Caddyfile");
+    shell_exec("cp -f templates/db.php.prod app/config/db.php");
 
     do {
         $projectDomain = readline("Введи название домена, на котором будет располагаться проект (без http://)\n >>> ");
@@ -79,7 +80,6 @@ if ('dev' === $serverType) {
 # Скопировать app/runtime/.gitignore в app/vendor/.gitignore
 shell_exec("cp -f app/runtime/.gitignore app/vendor/.gitignore");
 shell_exec("cp -f templates/docker-compose.yml docker-compose.yml");
-shell_exec("cp -f templates/db.php app/config/db.php");
 shell_exec("cp -f templates/update.sh update.sh");
 
 
@@ -107,6 +107,12 @@ foreach ($replaceInFiles as $filename) {
 
     foreach ($stringToReplace as $oldVal => $newVal) {
         $str = str_replace($oldVal, $newVal, $str);
+    }
+
+    if ('prod' === $serverType) {
+        $str = str_replace('- {PROJECT_PORT}:{PROJECT_PORT}', '', $str);
+        $str = str_replace('- {PHPMYADMIN_PORT}:{PHPMYADMIN_PORT}', '', $str);
+        $str = str_replace('#restart: always', 'restart: always', $str);
     }
 
     //write the entire string
