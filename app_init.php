@@ -36,14 +36,6 @@ if (file_exists("./app") && is_dir("./app")) {
 }
 
 if ('1' === $projectType && !$appExist) {
-    do {
-        $projectPort = readline("Введи порт проекта. Будет открываться по адресу https://localhost:port\n>>> ");
-    } while ('' === $projectPort);
-
-    do {
-        $phpmyadminPort = readline("Введи порт для PhpMyAdmin. Будет открываться по адресу https://localhost:port\n>>> ");
-    } while ('' === $phpmyadminPort);
-
     shell_exec('composer create-project --prefer-dist yiisoft/yii2-app-basic app');
 } elseif ('2' === $projectType) {
     readline("Создайте папку app/ и переместите в неё ваш Yii2-проект. После этого нажмите клавишу Enter.");
@@ -58,6 +50,14 @@ shell_exec("rm -rf app/vagrant app/.gitignore app/docker-compose.yml app/LICENSE
 
 # Вариант для Dev
 if ('dev' === $serverType) {
+    do {
+        $projectPort = readline("Введи порт проекта. Будет открываться по адресу https://localhost:port\n>>> ");
+    } while ('' === $projectPort);
+
+    do {
+        $phpmyadminPort = readline("Введи порт для PhpMyAdmin. Будет открываться по адресу https://localhost:port\n>>> ");
+    } while ('' === $phpmyadminPort);
+    
     shell_exec("cp -f templates/Caddyfile.dev docker/Caddyfile");
     shell_exec("cp -f templates/db.php app/config/db.php");
 } elseif ('prod' === $serverType) {
