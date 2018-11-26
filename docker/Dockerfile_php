@@ -13,4 +13,4 @@ RUN apt-get update && apt-get install -my \
 	libxml2-dev \
 	libpng-dev
 RUN docker-php-source extract 
-RUN docker-php-ext-install mysqli pdo_mysql json soap xml opcache mbstring dom gd
+RUN docker-php-ext-install mysqli pdo_mysql json soap xml opcache mbstring dom gd intl
