@@ -4,13 +4,24 @@ COPY php.ini /usr/local/etc/php/
 RUN mkdir -p /app
 WORKDIR /app
 
+RUN export CFLAGS="$PHP_CFLAGS" CPPFLAGS="$PHP_CPPFLAGS" LDFLAGS="$PHP_LDFLAGS"
+RUN apt-get update && apt-get install -y \
+ 	libmagickwand-dev --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/* \
+    && pecl install imagick \
+	&& docker-php-ext-enable imagick
+
 RUN apt-get update && apt-get install -my \
-	wget \
+    wget \
 	git \
 	unzip \
     make \
     libtool \
 	libxml2-dev \
-	libpng-dev
+	libpng-dev \
+	zlib1g-dev \ 
+	libicu-dev \
+	g++
 RUN docker-php-source extract 
-RUN docker-php-ext-install mysqli pdo_mysql json soap xml opcache mbstring dom gd intl
+RUN docker-php-ext-configure intl \
+&& docker-php-ext-install mysqli pdo_mysql json soap xml opcache mbstring dom gd intl
