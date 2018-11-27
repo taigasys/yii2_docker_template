@@ -7,7 +7,7 @@ docker-compose stop
 git pull
 
 # update composer
-./composer_install.sh
+./composer_update.sh
 
 # update containers
 docker-compose build
